@@ -127,3 +127,7 @@ namespace ImGui
     void MyFunction(const char* name, MyMatrix44* mtx);
 }
 */
+
+#include <vulkan/vulkan.h>
+
+#define ImTextureID VkDescriptorSet
