@@ -597,7 +597,7 @@ bool ImGui_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer)
         check_vk_result(err);
     }
 
-    VkDescriptorSet font_descriptor_set = (VkDescriptorSet)ImGui_ImplVulkan_AddTexture(bd->FontSampler, bd->FontView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    VkDescriptorSet font_descriptor_set = ImGui_ImplVulkan_AddTexture(bd->FontSampler, bd->FontView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
     // Create the Upload Buffer:
     {
@@ -1469,5 +1469,5 @@ ImTextureID ImGui_ImplVulkan_AddTexture(VkSampler sampler, VkImageView image_vie
         vkUpdateDescriptorSets(v->Device, 1, write_desc, 0, NULL);
     }
 
-    return (ImTextureID)descriptor_set;
+    return descriptor_set;
 }
