@@ -888,6 +888,10 @@ static void ImGui_ImplVulkan_CreatePipeline(VkDevice device, const VkAllocationC
 
     VkGraphicsPipelineCreateInfo info = {};
     info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+#ifdef VK_VERSION_1_3
+    if (bd->VulkanInitInfo.RenderingCreateInfo)
+        info.pNext = bd->VulkanInitInfo.RenderingCreateInfo;
+#endif
     info.flags = bd->PipelineCreateFlags;
     info.stageCount = 2;
     info.pStages = stage;
@@ -900,7 +904,12 @@ static void ImGui_ImplVulkan_CreatePipeline(VkDevice device, const VkAllocationC
     info.pColorBlendState = &blend_info;
     info.pDynamicState = &dynamic_state;
     info.layout = bd->PipelineLayout;
+#ifndef VK_VERSION_1_3
     info.renderPass = renderPass;
+#else
+    if (!bd->VulkanInitInfo.RenderingCreateInfo)
+        info.renderPass = renderPass;
+#endif
     info.subpass = subpass;
     VkResult err = vkCreateGraphicsPipelines(device, pipelineCache, 1, &info, allocator, pipeline);
     check_vk_result(err);
@@ -1042,7 +1051,11 @@ bool    ImGui_ImplVulkan_Init(ImGui_ImplVulkan_InitInfo* info, VkRenderPass rend
     IM_ASSERT(info->DescriptorPool != VK_NULL_HANDLE);
     IM_ASSERT(info->MinImageCount >= 2);
     IM_ASSERT(info->ImageCount >= info->MinImageCount);
+#ifndef VK_VERSION_1_3
     IM_ASSERT(render_pass != VK_NULL_HANDLE);
+#else
+    IM_ASSERT(render_pass != VK_NULL_HANDLE || info->RenderingCreateInfo != nullptr);
+#endif
 
     bd->VulkanInitInfo = *info;
     bd->RenderPass = render_pass;

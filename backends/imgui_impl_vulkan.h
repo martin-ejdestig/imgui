@@ -61,6 +61,9 @@ struct ImGui_ImplVulkan_InitInfo
     VkSampleCountFlagBits           MSAASamples;            // >= VK_SAMPLE_COUNT_1_BIT (0 -> default to VK_SAMPLE_COUNT_1_BIT)
     const VkAllocationCallbacks*    Allocator;
     void                            (*CheckVkResultFn)(VkResult err);
+#ifdef VK_VERSION_1_3
+    VkPipelineRenderingCreateInfo   *RenderingCreateInfo; // Struct is copied but this only interesting when init:ing.
+#endif                                                    // Common to point to stack. FIXME: OK? Come up with something better?
 };
 
 // Called by user code
